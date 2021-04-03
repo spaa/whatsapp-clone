@@ -1,65 +1,60 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import HeadDetails from '../components/HeadDetails'
+import Sidebar from '../components/Sidebar'
+import ChatConversation from '../components/ChatConversationPanel'
+import styled from 'styled-components'
+import {useState} from 'react'
+
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useCollection } from "react-firebase-hooks/firestore";
+import firebase from 'firebase';
+import { auth, db } from "../firebase";
 
 export default function Home() {
+  const [chatID, setChatID] = useState('');
+  const [recepientData , setRecepientData] = useState('');
+
+  const getChatId = (chatID , recepientData )=>{
+    console.log("chat with user "+chatID);
+    setChatID(chatID);
+    setRecepientData(recepientData);
+    //setOneTwoOnechatInfo(chatInfo);
+  }
+
+  const onContainerHover = ()=>{
+    let recepientD;
+    const readRecepientData = async()=> {
+      console.log("readRecepientData async Function Called for email: ",recepientData.email)
+      const recepientSnapshot = await db.collection('user').where("email","==",recepientData.email).get();
+      setRecepientData(recepientSnapshot?.docs?.[0]?.data());
+
+    }
+    readRecepientData();
+    //console.log("Hover Container");
+    console.log("On Hover Recepient Updated Data" , recepientData );
+  }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Container>
+      <HeadDetails/>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+      <SideBarColumn onHover={onContainerHover} chatID={chatID} seeChat={getChatId}/>
+      <ChatConversationColumn onHover={onContainerHover} chatID={chatID} recepientData={recepientData} />
+    </Container>
   )
 }
+
+const Container = styled.div`
+    display: flex;
+    overflow-y: scroll;
+    overflow-x :hidden;
+    ::-webkit-scrollbar {
+        display:none;
+    }
+
+  `;
+
+const SideBarColumn = styled(Sidebar)`
+`;
+
+const ChatConversationColumn = styled(ChatConversation)`
+`;
