@@ -10,14 +10,13 @@ const Login = () => {
         auth.signInWithPopup(provider)
         .then(result=>{
             const user = result.user
-            console.log(user);
+            //console.log(user);
             db.collection('user').doc(user.uid).set({
                 email : user.email,
                 lastSeen : firebase.firestore.FieldValue.serverTimestamp(),
                 photoURL : user.photoURL,
                 online: true,
-              },{merge:true})
-
+              },{merge:true});
             })
         .catch((error)=>alert(`Problem:${error.message}`));
     }

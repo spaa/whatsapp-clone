@@ -7,7 +7,7 @@ import moment from 'moment';
 import DoneIcon from '@material-ui/icons/Done';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 
-const Message = ({user , message, devlivered}) => {
+const Message = ({user , message, delivered , read}) => {
     const [userLoggedIn] = useAuthState(auth);
 
     const TypeOfMessage = user === userLoggedIn.email ? Sender : Receiver
@@ -15,7 +15,22 @@ const Message = ({user , message, devlivered}) => {
         <Container>
         <TypeOfMessage>
             {message.message}
-            <TimeStamp>{message.timestamp ? moment(message.timestamp).format('LT') : "..."} {TypeOfMessage === Sender ? (devlivered ? <DoubleTickIcon style={{fontSize:15}} color="primary"/> : <SingleTickIcon style={{fontSize:15}} color="primary"/>) : ""} </TimeStamp>
+             
+                {TypeOfMessage === Sender 
+                    ? <TimeStamp style={{right : "8px"}}>
+                        {message.timestamp ? moment(message.timestamp).format('LT') : "..."}
+                        {read
+                            ? <DoubleTickIcon style={{fontSize:18, color:"#3CBC28"}} />
+                            :delivered 
+                                ? <DoubleTickIcon style={{fontSize:18}} color="action" /> 
+                                : <SingleTickIcon style={{fontSize:18}} color="action"/>
+                        }
+                      </TimeStamp> 
+                    : <TimeStamp style={{right : "0px"}}>
+                        {message.timestamp ? moment(message.timestamp).format('LT') : "..."}  
+                      </TimeStamp>
+                } 
+            
         </TypeOfMessage>
         </Container> 
     );
@@ -31,7 +46,7 @@ const MessageElement = styled.p`
     border-radius : 8px;
     margin : 10px;
     min-width : 60px;
-    max-width : 80%;
+    max-width : 70%;
     word-break : break-word;
     padding-bottom : 16px;
     padding-right : 50px;
@@ -40,34 +55,52 @@ const MessageElement = styled.p`
     text-justify: inter-word;
 `;
 
-const Sender = styled(MessageElement)`
-    margin-left : auto;
-    background-color : #dcf8c6;
-`;
-
-const Receiver = styled(MessageElement)`
-    background-color : white;
-`;
-
 const TimeStamp = styled.span`
     color : grey;
     padding : 10px;
     font-size : 9px;
     position : absolute;
-    bottom : 0;
-    right : 8px;
+    bottom : -5px;
+    
+`;
+
+const Sender = styled(MessageElement)`
+    margin-left : auto;
+    background-color : #dcf8c6;
+    ::before{
+        content: '';
+        border-left: 20px solid #dcf8c6;
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        position: absolute;
+        top : 0px;
+        right:-10px;
+    }
+`;
+
+const Receiver = styled(MessageElement)`
+    background-color : white;
+    ::before{
+        content: '';
+        border-right: 20px solid white;
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        position: absolute;
+        top : 0px;
+        left:-10px;
+    }
 `;
 
 const SingleTickIcon = styled(DoneIcon)`
     position : absolute;
-    top : 10px;
-    right : 0;
+    top : 8px;
+    right : -5px;
     padding-left : 5px;
 `;
 
 const DoubleTickIcon = styled(DoneAllIcon)`
     position : absolute;
-    top : 10px;
-    right : 0;
+    top : 8px;
+    right : -5px;
     padding-left : 5px;
 `;

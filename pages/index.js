@@ -14,31 +14,22 @@ export default function Home() {
   const [recepientData , setRecepientData] = useState('');
 
   const getChatId = (chatID , recepientData )=>{
-    console.log("chat with user "+chatID);
+    //console.log("chat with user "+chatID);
     setChatID(chatID);
     setRecepientData(recepientData);
     //setOneTwoOnechatInfo(chatInfo);
   }
 
-  const onContainerHover = ()=>{
-    let recepientD;
-    const readRecepientData = async()=> {
-      console.log("readRecepientData async Function Called for email: ",recepientData.email)
-      const recepientSnapshot = await db.collection('user').where("email","==",recepientData.email).get();
-      setRecepientData(recepientSnapshot?.docs?.[0]?.data());
-
-    }
-    readRecepientData();
-    //console.log("Hover Container");
-    console.log("On Hover Recepient Updated Data" , recepientData );
+  const updateRecepientData = (recepientData) =>{
+    setRecepientData(recepientData);
   }
 
   return (
     <Container>
       <HeadDetails/>
 
-      <SideBarColumn onHover={onContainerHover} chatID={chatID} seeChat={getChatId}/>
-      <ChatConversationColumn onHover={onContainerHover} chatID={chatID} recepientData={recepientData} />
+      <SideBarColumn chatID={chatID} seeChat={getChatId}/>
+      <ChatConversationColumn chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} />
     </Container>
   )
 }

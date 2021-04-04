@@ -6,49 +6,35 @@ import {auth , db} from '../firebase'
 
 import ChatScreen from './ChatScreen'
 
-const ChatConversation = ({chatID,recepientData  , onHover}) => {
-    const [userChat,setUserChat] = useState('');
-    const [userMessages,setUserMessages] = useState('');
-    const [user] = useAuthState(auth);
+const ChatConversation = ({chatID,recepientData ,updateRecepientData}) => {
 
-    useEffect(() => {
-        console.log("userEffect called and chatID:"+ chatID)
-        const getMessages = async()=>{
-            if(chatID){
-                const ref = db.collection('chats').doc(chatID);
-        
-                //PREP the messages on server
-                const messageRes = await ref.collection("messages").orderBy("timestamp","asc").get();
-        
-                const messages = messageRes.docs.map(doc=> ({
-                    id: doc.id,
-                    ...doc.data(),
-                })).map(message => ({
-                    ...message,
-                    timestamp : message.timestamp.toDate().getTime()
-                }));
-                
-                //PREP the chats
-                const chatRes = await ref.get();
-                const chat={
-                    id : chatRes.id,
-                    ...chatRes.data()
-                }
-                console.log("Chat ref: ", chatRes)
-                setUserChat(chat);
-                setUserMessages(messages);
-                console.log("chat",userChat);
-                console.log("messages",userMessages);
-            }
+    if(chatID){
+        const setMessageSceen = async()=>{
+            const messages = await db
+            .collection("chats")
+            .doc(chatID)
+            .collection("messages")
+            .orderBy("timestamp", "asc").get();
+
+            console.log("Messages:",messages)
+            const filteredMessage = messages?.docs?.filter(message=> message.data().user === recepientData?.email && message.data().messageSeen === false);
+            console.log("Filtered Message",filteredMessage)
+            // messages?.map(message=> (
+            
+            //     db.collection('chats').doc(chatID).collection('messages').doc(message.id).update({
+            //         messageSeen : true
+            //     })
+            // ))
         }
-        getMessages();
-    }, [chatID , recepientData])
+        setMessageSceen();
+    }
+
 
     return ( 
          
             <>
                 {chatID 
-                ? <ChatScreen onHover={onHover} chatID={chatID} recepientData={recepientData} userChat={userChat} userMessages={userMessages} /> 
+                ? <ChatScreen chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} /> 
                 :
                 <Body>
                 <Container>
@@ -61,8 +47,6 @@ const ChatConversation = ({chatID,recepientData  , onHover}) => {
 }
  
 export default ChatConversation;
-
-//export async function getServerSideProps()
 
 const Body = styled.div`
     top:0px;

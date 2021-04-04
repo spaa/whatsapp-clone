@@ -27,10 +27,10 @@ const Sidebar = ({seeChat}) => {
         if(!input) return null;
 
         const data = chatAlreadyExists(input);
-        // if(!data.userExists) {
-        //     alert("Entered Email id is not registered");
-        //     return "";
-        // }
+        if(!data.userExists) {
+            alert("Entered Email id is not registered");
+            return "";
+        }
         if(data.chatExists) {
             alert("Chat with user already exists");
             return "";
@@ -47,17 +47,17 @@ const Sidebar = ({seeChat}) => {
 
     const chatAlreadyExists = (recepientEmail) => {
         const chatExists =!!chatSnapshot?.docs.find(chat => chat.data().users.find(user => user === recepientEmail)?.length>0)
-        //const userExists = !!userAccountSnapshot?.docs.find(user => user.data().email === recepientEmail)
-        //return {chatExists,userExists};
-        return {chatExists};
+        const userExists = !!userAccountSnapshot?.docs.find(user => user.data().email === recepientEmail)
+        return {chatExists,userExists};
     }
     const onLogout = ()=>{
         //Update the last Sceen
         db.collection("user").doc(user.uid).set({
             lastSeen : firebase.firestore.FieldValue.serverTimestamp(),
             online: false
-        },{merge:true});
-        auth.signOut();
+        },{merge:true}).then(()=>{
+            auth.signOut();
+        }).catch((error)=> alert("Problem while logging out :" + error.message));
     }
 
     return (  

@@ -16,17 +16,16 @@ import SendIcon from '@material-ui/icons/Send';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import ChatIcon from "@material-ui/icons/Chat";
 import getRecepientEmail from "../utils/getRecepientEmail";
-import Timeago from 'timeago-react'
 import Message from "./Message";
+
+import ChatConversationHeader from './ChatConversationHeader';
 
 import ScrollIntoView from 'react-scroll-into-view'
 
-const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover}) => {
+const ChatScreen = ({ chatID, recepientData, updateRecepientData}) => {
   const [user] = useAuthState(auth);
   const [input,setInput] = useState('');
   const [chaosenEmoji , setChosenEmoji] = useState(null);
-  const [recepientLastSceen,setRecepientLastSceen] = useState('');
-  const recipientName = getRecepientEmail(userChat.users, user);
   const [displayPicker , setDisplayPicker] = useState("none");
   
   const [messageSnapshot] = useCollection(
@@ -37,16 +36,20 @@ const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover})
       .orderBy("timestamp", "asc")
   );
 
-  if(recepientData?.online){
-    messageSnapshot?.docs?.map(message=> (
-      db.collection('chats').doc(chatID).collection('messages').doc(message.id).update({
-        devlivered : true
-      })
-    ))
-  }
+  console.log("User Online: ",recepientData)
 
-    // const [chatInfoSnapShot] = useCollection(db.collection('chats').doc(chatID).get());
-    // setRecepientLastSceen(chatInfoSnapShot?.docs?.[0]?.data());
+  // if(recipientInfo?.online){
+  //       const messageFilter = messageSnapshot?.docs?.filter(message=> message?.data()?.user === user.email)
+  //       console.log(" message Filter Called: ", messageFilter?.[0]?.data())
+  //       messageFilter?.map(message=> (
+  //           db.collection('chats').doc(chatID).collection('messages').doc(message.id).update({
+  //           devlivered : true
+  //           })
+  //       ))
+
+  //   }
+
+  //console.log("messageSnapshot",messageSnapshot)
 
   const endOfMessageRef = useRef(null);
 
@@ -57,7 +60,8 @@ const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover})
             <Message 
                 key = {message.id}
                 user = {message.data().user}
-                devlivered = {message.data().devlivered}
+                delivered = {message.data().delivered}
+                read = {message.data().messageSeen}
                 message={{
                     ...message.data(),
                     timestamp : message.data().timestamp?.toDate().getTime()
@@ -66,29 +70,15 @@ const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover})
             />
         ))
     }
-    // else {
-    //     return JSON.parse(userMessages).map(message => 
-    //         <Message 
-    //             key = {message.id}
-    //             user = {message.user}
-    //             message={message.message}  
-    //         />
-    //         )
-    // }
   };
 
   const scrollToBottom = ()=>{
-    console.log("scrollToBottom called", endOfMessageRef.current)
+    //console.log("scrollToBottom called", endOfMessageRef.current)
     endOfMessageRef.current.scrollIntoView({
       block: "start", 
       behavior: "smooth" ,
     })
   }
-  
-  // useEffect(() => {
-
-  // }, [userChat,recepientLastSceen,recepientData]);
-
 
   const sendMessage = (e)=>{
       e.preventDefault();
@@ -98,35 +88,28 @@ const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover})
           message : input,
           user: user.email,
           photoURL : user.photoURL,
-          devlivered : false
+          delivered : false,
+          messageSeen : false,
       })
-      console.log("Message send ",input)
+      //console.log("Message send ",input)
       setInput("");
       scrollToBottom();
   }
 
   const setTypingFalse = (e) => {
       e.preventDefault();
-      setInput(e.target.value);
-      console.log("setTypingFalse called")
+      //setInput(e.target.value);
+      //console.log("setTypingFalse called")
       db.collection("chats").doc(chatID).update({
         typing : firebase.firestore.FieldValue.arrayRemove(user?.email)
       })
   }
 
   const setTypingTrue = (e) => {
-    console.log("setTypingTrue called")
+    //console.log("setTypingTrue called")
     db.collection("chats").doc(chatID).update({
       typing : firebase.firestore.FieldValue.arrayUnion(user?.email)
     })
-  }
-
-  const lastActive = ()=> {
-      return (
-          <>
-            Last Active :{recepientData?.lastSeen ? <Timeago datetime={recepientData?.lastSeen?.toDate()}/> : "Unavailable"} 
-          </>
-      );
   }
 
   const toggleShowPicker = ()=>{
@@ -148,15 +131,12 @@ const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover})
 
   return (
     <Container>
-      <Header onMouseEnter={onHover}>
+      <Header>
         {recepientData 
                 ? (<Avatar src={recepientData?.photoURL}/>)
                 : (<Avatar> S</Avatar>)
             }
-        <HeaderInformation>
-          <h5>{recepientData?.email ? recepientData?.email : recipientName}</h5>
-          <p>{userChat?.typing ? (userChat?.typing?.includes(recepientData?.email) ? "Typing...." : recepientData?.online ?  "Online" : lastActive()) : recepientData?.online ?  "Online" : lastActive()}</p>
-        </HeaderInformation>
+        <ChatConversationHeader chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} />
         <HeaderIcons>
           <IconButton>
             <AttachFileIcon />
@@ -167,10 +147,9 @@ const ChatScreen = ({ chatID, userChat, recepientData , userMessages , onHover})
         </HeaderIcons>
       </Header>
 
-      <MessageContainer onMouseEnter={onHover}>
+      <MessageContainer>
         {showMessage()}
         <EndOfMessage className="EOD" ref={endOfMessageRef} />
-        
       </MessageContainer>
       <ImagePickerContainer style={{display: displayPicker}}>
         <ImagePicker  set="apple" onSelect={addEmoji}/>
@@ -218,7 +197,7 @@ const HeaderInformation = styled.div`
 const HeaderIcons = styled.div``;
 
 const EndOfMessage = styled.div`
-  margin-bottom : 50px;
+  margin-bottom : 70px;
 `;
 const MessageContainer = styled.div`
     padding : 10px;
