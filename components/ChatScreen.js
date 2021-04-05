@@ -15,14 +15,13 @@ import MicIcon from '@material-ui/icons/Mic';
 import SendIcon from '@material-ui/icons/Send';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import ChatIcon from "@material-ui/icons/Chat";
-import getRecepientEmail from "../utils/getRecepientEmail";
 import Message from "./Message";
+
+import {useSwipeable} from 'react-swipeable'
 
 import ChatConversationHeader from './ChatConversationHeader';
 
-import ScrollIntoView from 'react-scroll-into-view'
-
-const ChatScreen = ({ chatID, recepientData, updateRecepientData}) => {
+const ChatScreen = ({ chatID, recepientData, updateRecepientData, toggleMobileViewContent}) => {
   const [user] = useAuthState(auth);
   const [input,setInput] = useState('');
   const [chaosenEmoji , setChosenEmoji] = useState(null);
@@ -37,6 +36,23 @@ const ChatScreen = ({ chatID, recepientData, updateRecepientData}) => {
   );
 
   console.log("User Online: ",recepientData)
+
+  const handler = useSwipeable({
+    onSwipedLeft : (SwipeEventData)=> {
+      console.log("Swpied Left from position: ",SwipeEventData.deltaX)
+      if(SwipeEventData.initial[0] >=300 && SwipeEventData.deltaX <=-100)
+        toggleMobileViewContent()
+    },
+    onSwipedRight : (SwipeEventData)=> {
+      console.log("Swpied Rght from position: ",SwipeEventData.initial)
+      if(SwipeEventData.initial[0] <=15 && SwipeEventData.deltaX >=40)
+        toggleMobileViewContent()
+    }
+  });
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messageSnapshot])
 
   // if(recipientInfo?.online){
   //       const messageFilter = messageSnapshot?.docs?.filter(message=> message?.data()?.user === user.email)
@@ -56,18 +72,22 @@ const ChatScreen = ({ chatID, recepientData, updateRecepientData}) => {
 
   const showMessage = () => {
     if(messageSnapshot){
+        let date = messageSnapshot?.docs?.[0]?.data().timestamp?.toDate();
         return messageSnapshot.docs.map(message=> (
+          <> 
             <Message 
                 key = {message.id}
                 user = {message.data().user}
+                chatID = {chatID}
                 delivered = {message.data().delivered}
                 read = {message.data().messageSeen}
                 message={{
                     ...message.data(),
-                    timestamp : message.data().timestamp?.toDate().getTime()
+                    timestamp : message.data().timestamp?.toDate()
                 }}
                 recepientData={recepientData}
             />
+          </>
         ))
     }
   };
@@ -90,10 +110,16 @@ const ChatScreen = ({ chatID, recepientData, updateRecepientData}) => {
           photoURL : user.photoURL,
           delivered : false,
           messageSeen : false,
-      })
+      }).then(()=>{
+        db.collection('chats').doc(chatID).update({
+          timestamp : firebase.firestore.FieldValue.serverTimestamp()
+        }).then(()=>{
+          setInput("");
+          scrollToBottom();
+        }).catch((error)=>{alert("Error While updating chat timestamp",error.message)})
+      }).catch((error)=>{alert("Error While creating chat message",error.message)})
       //console.log("Message send ",input)
-      setInput("");
-      scrollToBottom();
+      
   }
 
   const setTypingFalse = (e) => {
@@ -146,8 +172,8 @@ const ChatScreen = ({ chatID, recepientData, updateRecepientData}) => {
           </IconButton>
         </HeaderIcons>
       </Header>
-
-      <MessageContainer>
+      
+      <MessageContainer {...handler} style={{trackMouse: true}}>
         {showMessage()}
         <EndOfMessage className="EOD" ref={endOfMessageRef} />
       </MessageContainer>
@@ -182,22 +208,10 @@ const Header = styled.div`
   align-items: center;
 `;
 
-const HeaderInformation = styled.div`
-  margin-left: 15px;
-  flex: 1;
-  > h3 {
-    margin-bottom: 3px;
-  }
-
-  > p {
-    font-size: 14px;
-    color: grey;
-  }
-`;
 const HeaderIcons = styled.div``;
 
 const EndOfMessage = styled.div`
-  margin-bottom : 70px;
+  margin-bottom : 20px;
 `;
 const MessageContainer = styled.div`
     padding : 10px;

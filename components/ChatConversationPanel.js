@@ -1,12 +1,9 @@
 import styled from 'styled-components'
-import {useEffect , useState} from 'react';
-import { useAuthState} from 'react-firebase-hooks/auth';
-import {useCollection} from 'react-firebase-hooks/firestore'
-import {auth , db} from '../firebase'
+import { db} from '../firebase'
 
 import ChatScreen from './ChatScreen'
 
-const ChatConversation = ({chatID,recepientData ,updateRecepientData}) => {
+const ChatConversation = ({chatID,recepientData ,updateRecepientData , toggleMobileViewContent}) => {
 
     if(chatID){
         const setMessageSceen = async()=>{
@@ -19,12 +16,6 @@ const ChatConversation = ({chatID,recepientData ,updateRecepientData}) => {
             console.log("Messages:",messages)
             const filteredMessage = messages?.docs?.filter(message=> message.data().user === recepientData?.email && message.data().messageSeen === false);
             console.log("Filtered Message",filteredMessage)
-            // messages?.map(message=> (
-            
-            //     db.collection('chats').doc(chatID).collection('messages').doc(message.id).update({
-            //         messageSeen : true
-            //     })
-            // ))
         }
         setMessageSceen();
     }
@@ -34,7 +25,7 @@ const ChatConversation = ({chatID,recepientData ,updateRecepientData}) => {
          
             <>
                 {chatID 
-                ? <ChatScreen chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} /> 
+                ? <ChatScreen chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} toggleMobileViewContent={toggleMobileViewContent}/> 
                 :
                 <Body>
                 <Container>
@@ -49,7 +40,6 @@ const ChatConversation = ({chatID,recepientData ,updateRecepientData}) => {
 export default ChatConversation;
 
 const Body = styled.div`
-    top:0px;
     height :100vh;
     width : 100%;
     background-color : #f8f9fa;

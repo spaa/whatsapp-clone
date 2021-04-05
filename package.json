@@ -23,7 +23,8 @@
     "react-bootstrap": "^1.5.2",
     "react-dom": "17.0.2",
     "react-firebase-hooks": "^3.0.3",
-    "react-scroll-into-view": "^1.8.2",
+    "react-responsive": "^8.2.0",
+    "react-swipeable": "^6.1.0",
     "styled-components": "^5.2.1",
     "timeago-react": "^3.0.2",
     "w3-css": "^4.1.0"

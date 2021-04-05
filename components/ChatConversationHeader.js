@@ -4,7 +4,7 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import firebase from 'firebase';
 import { auth, db } from "../firebase";
 import { useEffect, useRef, useState } from "react";
-
+import ChatHeaderTypingChangeTracker from './ChatHeaderTypingChangeTracker';
 
 import getRecepientEmail from "../utils/getRecepientEmail";
 
@@ -14,8 +14,8 @@ import Timeago from 'timeago-react'
 const ChatConversationHeader = ({recepientData , chatID , updateRecepientData }) => {
     const [user] = useAuthState(auth);
 
-    const [chatInfoSnapShot] = useCollection(db.collection('chats'));
-    const chatInfo = chatInfoSnapShot?.docs?.filter(doc=> doc.id === chatID)?.[0]?.data();
+    // const [chatInfoSnapShot] = useCollection(db.collection('chats'));
+    // const chatInfo = chatInfoSnapShot?.docs?.filter(doc=> doc.id === chatID)?.[0]?.data();
     //console.log("chat Info",chatInfo);
 
     const [recepientSnapShot] = useCollection(db.collection("user").where("email","==",recepientData?.email))
@@ -39,11 +39,12 @@ const ChatConversationHeader = ({recepientData , chatID , updateRecepientData })
           .collection("messages")
           .orderBy("timestamp", "asc")
       );
+    console.log("Message snapshot: ", messageSnapshot)
 
     useEffect(() => {
-        console.log("UseEffect Called")
+        //console.log("UseEffect Called")
         const filteredMessage = messageSnapshot?.docs?.filter(message=> message.data().user === recepientData?.email && message.data().messageSeen === false);
-        console.log("UseEffect Called Filtered Message",filteredMessage);
+        //console.log("UseEffect Called Filtered Message",filteredMessage);
         filteredMessage?.map(message=> (
             db.collection('chats').doc(chatID).collection('messages').doc(message.id).update({
                 messageSeen : true
@@ -63,19 +64,8 @@ const ChatConversationHeader = ({recepientData , chatID , updateRecepientData })
 
     }
 
-    const lastActive = ()=> {
-        return (
-            <>
-              Last Active :{recipientInfo?.lastSeen ? <Timeago datetime={recipientInfo?.lastSeen?.toDate()}/> : "Unavailable"} 
-            </>
-        );
-    }
-    
     return (  
-        <Container>
-            <h5>{recipientInfo?.email }</h5>
-            <p>{chatInfo?.typing ? (chatInfo?.typing?.includes(recepientData?.email) ? "Typing...." : recipientInfo?.online ?  "Online" : lastActive()) : recipientInfo?.online ?  "Online" : lastActive()}</p>
-        </Container>
+        <ChatHeaderTypingChangeTracker recipientInfo={recipientInfo} chatID={chatID} />
     );
 }
  
@@ -89,7 +79,8 @@ const Container = styled.div`
   }
 
   > p {
-    font-size: 14px;
+    font-size: 12px;
     color: grey;
+    font-family : Arial;
   }
 `;

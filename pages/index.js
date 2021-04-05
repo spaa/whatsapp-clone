@@ -2,16 +2,14 @@ import HeadDetails from '../components/HeadDetails'
 import Sidebar from '../components/Sidebar'
 import ChatConversation from '../components/ChatConversationPanel'
 import styled from 'styled-components'
+import {useMediaQuery } from 'react-responsive';
+import MediaQuery from 'react-responsive'
 import {useState} from 'react'
-
-import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollection } from "react-firebase-hooks/firestore";
-import firebase from 'firebase';
-import { auth, db } from "../firebase";
 
 export default function Home() {
   const [chatID, setChatID] = useState('');
   const [recepientData , setRecepientData] = useState('');
+  const [mobileViewToggle , setMobileViewToggle] = useState(false);
 
   const getChatId = (chatID , recepientData )=>{
     //console.log("chat with user "+chatID);
@@ -24,18 +22,40 @@ export default function Home() {
     setRecepientData(recepientData);
   }
 
-  return (
-    <Container>
-      <HeadDetails/>
+  const toggleMobileViewContent = (e)=>{
+    console.log("toggleMobileViewContent called")
+    setMobileViewToggle(!mobileViewToggle);
+  }
 
-      <SideBarColumn chatID={chatID} seeChat={getChatId}/>
-      <ChatConversationColumn chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} />
-    </Container>
+  const toggleAnNullifyChat = ()=>{
+    setMobileViewToggle(!mobileViewToggle);
+    setChatID(null);
+  }
+
+  return (
+    <>
+      <HeadDetails/>
+      <MediaQuery minWidth={450}>
+      <Container style={{display:"flex"}}>
+        <SideBarColumn chatID={chatID} seeChat={getChatId}/>
+        <ChatConversationColumn chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} />
+        </Container>
+      </MediaQuery>
+      <MediaQuery maxWidth={450}>
+      <Container >
+        <SideBarDiv style={{display:mobileViewToggle ? "none" : "block"}} onClick={toggleMobileViewContent}>
+        <SideBarColumn chatID={chatID} seeChat={getChatId}/>
+        </SideBarDiv>
+        <ChatPanelDiv style={{display:mobileViewToggle? "block" : "none"}} >
+        <ChatConversationColumn chatID={chatID} recepientData={recepientData} updateRecepientData={updateRecepientData} toggleMobileViewContent={toggleAnNullifyChat} />
+        </ChatPanelDiv>
+        </Container>
+      </MediaQuery>
+    </>
   )
 }
 
 const Container = styled.div`
-    display: flex;
     overflow-y: scroll;
     overflow-x :hidden;
     ::-webkit-scrollbar {
@@ -49,3 +69,7 @@ const SideBarColumn = styled(Sidebar)`
 
 const ChatConversationColumn = styled(ChatConversation)`
 `;
+
+const SideBarDiv = styled.div``;
+
+const ChatPanelDiv = styled.div``;
