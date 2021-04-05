@@ -134,10 +134,10 @@ const Sidebar = ({ seeChat }) => {
           <Container >
             <Sticky>
               <Header>
-                <UserAvatar src={user?.photoURL} onClick={onLogout} />
+                <UserAvatar src={user?.photoURL} />
                 <IconContainer>
                   <IconButton>
-                    <ChatIcon />
+                    <ExitToAppIcon onClick={onLogout}  />
                   </IconButton>
                   <IconButton>
                     <MoreVertIcon />

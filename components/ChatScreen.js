@@ -45,7 +45,7 @@ const ChatScreen = ({ chatID, recepientData, updateRecepientData, toggleMobileVi
     },
     onSwipedRight : (SwipeEventData)=> {
       console.log("Swpied Rght from position: ",SwipeEventData.initial)
-      if(SwipeEventData.initial[0] <=15 && SwipeEventData.deltaX >=40)
+      if(SwipeEventData.initial[0] <=20 && SwipeEventData.deltaX >=50)
         toggleMobileViewContent()
     }
   });
@@ -53,19 +53,6 @@ const ChatScreen = ({ chatID, recepientData, updateRecepientData, toggleMobileVi
   useEffect(() => {
     scrollToBottom();
   }, [messageSnapshot])
-
-  // if(recipientInfo?.online){
-  //       const messageFilter = messageSnapshot?.docs?.filter(message=> message?.data()?.user === user.email)
-  //       console.log(" message Filter Called: ", messageFilter?.[0]?.data())
-  //       messageFilter?.map(message=> (
-  //           db.collection('chats').doc(chatID).collection('messages').doc(message.id).update({
-  //           devlivered : true
-  //           })
-  //       ))
-
-  //   }
-
-  //console.log("messageSnapshot",messageSnapshot)
 
   const endOfMessageRef = useRef(null);
 

@@ -1,36 +1,17 @@
 import styled from 'styled-components';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
-import firebase from 'firebase';
 import { auth, db } from "../firebase";
 import { useEffect, useRef, useState } from "react";
 import ChatHeaderTypingChangeTracker from './ChatHeaderTypingChangeTracker';
 
-import getRecepientEmail from "../utils/getRecepientEmail";
-
-import Timeago from 'timeago-react'
-
-
 const ChatConversationHeader = ({recepientData , chatID , updateRecepientData }) => {
     const [user] = useAuthState(auth);
-
-    // const [chatInfoSnapShot] = useCollection(db.collection('chats'));
-    // const chatInfo = chatInfoSnapShot?.docs?.filter(doc=> doc.id === chatID)?.[0]?.data();
-    //console.log("chat Info",chatInfo);
 
     const [recepientSnapShot] = useCollection(db.collection("user").where("email","==",recepientData?.email))
     const recipientInfo = recepientSnapShot?.docs?.[0]?.data();
     //console.log(recepientInfo)
 
-    // if(recipientInfo){
-    //     if(recepientData?.online != recipientInfo?.online ) {
-    //         console.log("Recepient Info Updated");
-    //         updateRecepientData(recipientInfo);
-    //     }
-    // }
-    //console.log("Recepient Info: ", recipientInfo);
-
-    //const recipientName = getRecepientEmail(userChat.users, user);
 
     const [messageSnapshot] = useCollection(
         db

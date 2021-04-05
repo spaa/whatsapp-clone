@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
-import firebase from 'firebase';
 import { auth, db } from "../firebase";
-import { useEffect, useRef, useState } from "react";
 
 import Timeago from 'timeago-react'
 
@@ -15,9 +13,6 @@ const ChatHeaderTypingChangeTracker = ({recipientInfo , chatID , updateRecepient
     const chatInfo = chatInfoSnapShot?.docs?.filter(doc=> doc.id === chatID)?.[0]?.data();
     console.log("chat Info",chatInfo);
 
-    // const [recepientSnapShot] = useCollection(db.collection("user").where("email","==",recipientInfo?.email))
-    // const recipientInfo = recepientSnapShot?.docs?.[0]?.data();
-    // console.log(recipientInfo)
 
     const lastActive = ()=> {
         return (

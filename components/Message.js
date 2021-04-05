@@ -1,7 +1,5 @@
 import styled from 'styled-components'
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollection } from "react-firebase-hooks/firestore";
-import firebase from 'firebase';
 import { auth, db } from "../firebase";
 import moment from 'moment';
 import DoneIcon from '@material-ui/icons/Done';

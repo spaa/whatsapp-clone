@@ -2,9 +2,7 @@ import styled from 'styled-components'
 import SearchIcon from '@material-ui/icons/Search';
 import {} from '@material-ui/core';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useCollection } from "react-firebase-hooks/firestore";
 import { auth, db } from "../firebase";
-import firebase from "firebase";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useState ,useRef } from 'react';
 import Chat from './Chat'
