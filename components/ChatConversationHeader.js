@@ -20,7 +20,7 @@ const ChatConversationHeader = ({recepientData , chatID , updateRecepientData })
           .collection("messages")
           .orderBy("timestamp", "asc")
       );
-    console.log("Message snapshot: ", messageSnapshot)
+    //console.log("Message snapshot: ", messageSnapshot)
 
     useEffect(() => {
         //console.log("UseEffect Called")

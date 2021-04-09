@@ -11,7 +11,7 @@ const ChatHeaderTypingChangeTracker = ({recipientInfo , chatID , updateRecepient
 
     const [chatInfoSnapShot] = useCollection(db.collection('chats'));
     const chatInfo = chatInfoSnapShot?.docs?.filter(doc=> doc.id === chatID)?.[0]?.data();
-    console.log("chat Info",chatInfo);
+    //console.log("chat Info",chatInfo);
 
 
     const lastActive = ()=> {

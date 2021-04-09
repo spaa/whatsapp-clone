@@ -1,14 +1,20 @@
 import { Avatar } from '@material-ui/core';
+import HeadDetails from './HeadDetails'
 import styled from 'styled-components'
 import { useAuthState} from 'react-firebase-hooks/auth';
 import getRecepientEmail from '../utils/getRecepientEmail'
-import {auth , db} from '../firebase'
+import {auth , db , storage} from '../firebase'
 import { useCollection, useCollectionOnce } from 'react-firebase-hooks/firestore';
 import moment from 'moment';
 import 'w3-css/w3.css'
 import DoneIcon from '@material-ui/icons/Done';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
+import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
+import DescriptionIcon from '@material-ui/icons/Description';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+//import { faArrowAltCircleDown } from '@fortawesome/free-solid-svg-icons' 
+//import { faArrowAltCircleDown } from '@fortawesome/free-regular-svg-icons' 
 //import { useRouter } from 'next/router'
 
 const Chat = ({id , users , seeChat}) => {
@@ -32,8 +38,41 @@ const Chat = ({id , users , seeChat}) => {
     // console.log("Last Message Time Stamp" , lastMessageTime)
     //console.log("Message Time Difference ", lastMessageDayDifference)
 
+
+    const getDocInfo = ()=>{
+        if(message.messageType==="doc"){
+            console.log("File ",message.message)
+            const filename = storage.refFromURL(message.message);
+            const extensionName = filename.name.split(".").pop().toUpperCase();
+            console.log("File to delete",filename)
+            return (
+                <div style={{display:"flex", backgroundColor:"#b6d6c0" , padding:"10px" , borderRadius:"6px",  cursor:"context-menu" ,userSelect:"none" }}>
+                    <div>
+                        {extensionName === "PDF"
+                        ? <img width="35px" src="/pdf.svg" alt="pdf"/>
+                        : <img width="35px" src="/doc.svg" alt="doc"/>
+                        }
+                    </div>
+                    <div style={{whiteSpace: "nowrap",overflow : "hidden",textOverflow: "ellipsis" ,fontFamily:"monospace" ,padding:"10px"}}>
+                        {filename.name}
+                    </div>
+                    <div style={{position:"relative", top:"5px"}}>
+                        <a href={message.message} target="_blank" download>
+                            <img src="/download-circular-button.svg" width="30px" />
+                        </a>
+                    </div>
+                    <div style={{position:"absolute", bottom:"-1px" , fontSize:"14px", fontFamily:"monospace" , color:"grey"}}>
+                        <span style={{}}>.{extensionName}</span>
+                    </div>
+                </div>
+            );
+        }
+    }
+
+
     return (  
         <Container onClick={()=>seeChat(id , recepient )}>
+            <HeadDetails />
             {recepient 
                 ? (<UserAvatar src={recepient?.photoURL}/>)
                 : (<UserAvatar> {recepientEmail[0]}</UserAvatar>)
@@ -43,7 +82,14 @@ const Chat = ({id , users , seeChat}) => {
                     {recepientEmail}                  
                 </UserName>
                 <LastMessageContainer>
-                    <LastMessage>{lastMessage?.message}</LastMessage>
+                    <LastMessage>
+                        {lastMessage?.messageType === "image" 
+                            ? <><InsertPhotoIcon style={{fontSize:20}} /> <span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}>Photo</span></>
+                            : lastMessage?.messageType === "doc" 
+                                ? <><DescriptionIcon style={{fontSize:20}} /> <span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}>Doc</span></>
+                                :lastMessage?.message
+                        }
+                    </LastMessage>
                     <div>
                         {lastMessage?.user === user?.email && (lastMessage?.delivered 
                             ? lastMessage?.messageSeen
@@ -112,6 +158,8 @@ const UserName = styled.p`
     overflow : hidden;
     text-overflow: ellipsis;
     font-weight : bold;
+    font-family : Geneva;
+    font-size : 18px;
     margin : 5px 0px;
 `;
 
@@ -120,6 +168,8 @@ const LastMessage = styled.span`
     white-space: nowrap;
     overflow : hidden;
     text-overflow: ellipsis;
+    font-family : Optima;
+    font-size : 15px;
     margin : 5px 0px;
 `;
 
@@ -172,6 +222,7 @@ const Container = styled.div`
     position:relative;
     border-bottom: 1px solid whitesmoke;
     height: 80px;
+    user-select: none;
     :hover {
         background-color : #e9eaeb;
     }

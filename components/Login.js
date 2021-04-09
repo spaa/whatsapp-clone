@@ -27,7 +27,7 @@ const Login = () => {
             <HeadDetails title="Whatsapp:Login" />
                 
             <LogoContainer>
-                <Logo src="/whatsapp640-640.png"/>
+                <Logo src="/whatsapp640-640.png" alt="whatsapp-logo" />
                 <LoginButton variant="contained" onClick={signIn}>Sign in</LoginButton>
             </LogoContainer>
         </Container>

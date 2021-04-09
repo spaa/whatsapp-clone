@@ -14,7 +14,7 @@ const Chat = ({ data , seeChat , changeToggleView}) => {
             typing: [],
             timestamp : new Date(),
         }).then(result=>{
-            console.log("Chat Added to db",result?.id)
+            //console.log("Chat Added to db",result?.id)
             changeToggleView()
             //seeChat(result.id, data)
         });

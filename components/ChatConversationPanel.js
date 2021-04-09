@@ -4,6 +4,7 @@ import { db} from '../firebase'
 import ChatScreen from './ChatScreen'
 
 const ChatConversation = ({chatID,recepientData ,updateRecepientData , toggleMobileViewContent}) => {
+    
 
     if(chatID){
         const setMessageSceen = async()=>{
@@ -13,9 +14,9 @@ const ChatConversation = ({chatID,recepientData ,updateRecepientData , toggleMob
             .collection("messages")
             .orderBy("timestamp", "asc").get();
 
-            console.log("Messages:",messages)
+            //console.log("Messages:",messages)
             const filteredMessage = messages?.docs?.filter(message=> message.data().user === recepientData?.email && message.data().messageSeen === false);
-            console.log("Filtered Message",filteredMessage)
+            //console.log("Filtered Message",filteredMessage)
         }
         setMessageSceen();
     }

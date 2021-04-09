@@ -22,7 +22,7 @@ const SearchBar = ({toggleSearchBarView, showChatList , chatSnapshot ,seeChat}) 
                 toggleSearchBarView(!showChatList);
             const getUsers = async()=>{
                 const users = await db.collection("user").orderBy("email").startAt(e.target.value).endAt(e.target.value+"\uf8ff").get();
-                console.log("Chat Snapshot",users);
+                //console.log("Chat Snapshot",users);
                 let userChatList = [];
                 let nonChatUsers =  [];
                 users?.docs?.forEach(user=>{
@@ -31,7 +31,7 @@ const SearchBar = ({toggleSearchBarView, showChatList , chatSnapshot ,seeChat}) 
                         (chat) =>
                           chat.data().users.find((u) => u === user.data().email)
                       );
-                    console.log("Chat exists for id ",user.id," : ", chatExists?.data())
+                    //console.log("Chat exists for id ",user.id," : ", chatExists?.data())
                     if(chatExists){
                         userChatList =
                             [...userChatList,
@@ -52,13 +52,13 @@ const SearchBar = ({toggleSearchBarView, showChatList , chatSnapshot ,seeChat}) 
                         ]
                     }
                 });
-                console.log("User List: ",userChatList);
-                console.log("Non chat User List", nonChatUsers)
+                //console.log("User List: ",userChatList);
+                //console.log("Non chat User List", nonChatUsers)
                 setChatList(userChatList);
                 setNewSuggestion(nonChatUsers);
             }
             getUsers();
-            console.log("Outer User List: ",chatList);
+            //console.log("Outer User List: ",chatList);
             setFlag(false);
         }
     }
@@ -78,6 +78,7 @@ const SearchBar = ({toggleSearchBarView, showChatList , chatSnapshot ,seeChat}) 
             ? <SearchIconStyle style={{fontSize:24}} color="disabled" />
             : <GoBackIconStyle style={{fontSize:24, color:"#34B7F1"}} onClick={changeToggleView} />
         }
+            <label style={{display:"none"}}>Search</label>
             <SearchInput ref={searchValue} placeholder="Search in Chat" onChange={searchUsers} />
         </Search>
         
