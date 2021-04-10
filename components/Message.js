@@ -1,5 +1,5 @@
-import styled,{ keyframes} from 'styled-components'
 import HeadDetails from './HeadDetails'
+import styled,{ keyframes} from 'styled-components'
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db ,storage } from "../firebase";
 import firebase from "firebase";
@@ -11,10 +11,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { IconButton } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import Image from 'next/image'
-import DescriptionIcon from '@material-ui/icons/Description';
-import GetAppIcon from '@material-ui/icons/GetApp';
-
+import MediaQuery from "react-responsive";
 
 const Message = ({id ,user , message, delivered , read , chatID}) => {
     const [userLoggedIn] = useAuthState(auth);
@@ -29,14 +26,14 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               })
               .then(() => {
-                console.log("File deleted successful from db")
+                //console.log("File deleted successful from db")
               })
               .catch((error) => {
-                console.log("Error While updating chat timestamp", error);
+                //console.log("Error While updating chat timestamp", error);
               });
           })
           .catch((error) => {
-            console.log("Error While deleting chat message", error);
+            //console.log("Error While deleting chat message", error);
           });
     }
 
@@ -44,18 +41,18 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
         const ans = confirm("Message will be deleted for everyone. Are you sure you want to delete?");
         if(ans===true){
             if(message.messageType==="image"){
-                console.log("File ",message.message)
+                //console.log("File ",message.message)
                 const filename = storage.refFromURL(message.message);
-                console.log("File to delete",filename)
+                //console.log("File to delete",filename)
                 storage.ref(`images/${filename.name}`).delete().then(() => {
                     alert("File deleted successful from storage")
                     deleteMessageFromDB()
                 });
             }
             else if(message.messageType==="doc"){
-                console.log("File ",message.message)
+                //console.log("File ",message.message)
                 const filename = storage.refFromURL(message.message);
-                console.log("File to delete",filename)
+                //console.log("File to delete",filename)
                 storage.ref(`docs/${filename.name}`).delete().then(() => {
                     alert("File deleted successful from storage")
                     deleteMessageFromDB()
@@ -67,19 +64,45 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
 
     const getDocInfo = ()=>{
         if(message.messageType==="doc"){
-            console.log("File ",message.message)
+            //console.log("File ",message.message)
             const filename = storage.refFromURL(message.message);
             const extensionName = filename.name.split(".").pop().toUpperCase();
-            console.log("File to delete",filename)
+            //console.log("File to delete",filename)
             return (
-                <div style={{display:"flex", backgroundColor:"#b6d6c0" , padding:"10px" , borderRadius:"6px",  cursor:"context-menu" ,userSelect:"none" }}>
+                <>
+                <MediaQuery minWidth={450}>
+                <div style={{display:"flex", backgroundColor:TypeOfMessage===SenderDocElement?"#b6d6c0" : "#e8e8e8" , padding:"10px" , borderRadius:"6px",  cursor:"context-menu" ,userSelect:"none" }}>
                     <div>
                         {extensionName === "PDF"
-                        ? <Image width={70} height={70} src="/pdf.svg" alt="pdf" />
-                        : <Image width={70} height={70} src="/doc.svg" alt="doc" />
+                        ? <img width="35px" style={{position:"relative" , top:"3px"}} src="/pdf.svg" alt="pdf" />
+                        : <img width="35px" style={{position:"relative" , top:"3px"}} src="/doc.svg" alt="doc" />
                         }
                     </div>
                     <div style={{whiteSpace: "nowrap",overflow : "hidden",textOverflow: "ellipsis" ,fontFamily:"monospace" ,padding:"10px"}}>
+                        {filename.name}
+                    </div>
+                    
+                    <div style={{position:"relative", top:"5px"}}>
+                        <a href={message.message} target="_blank" download>
+                            <img src="/download-circular-button.svg" width="30px" alt="download-doc" />
+                        </a>
+                    </div>
+                    <div style={{position:"absolute", bottom:"-1px" , fontSize:"14px", fontFamily:"monospace" , color:"grey"}}>
+                        <span style={{}}>.{extensionName}</span>
+                    </div>
+                </div>
+                </MediaQuery>
+
+                <MediaQuery maxWidth={450}>
+                <div style={{display:"flex", backgroundColor:TypeOfMessage===SenderDocElement?"#b6d6c0" : "#e8e8e8" , padding:"10px" , borderRadius:"6px",  cursor:"context-menu" ,userSelect:"none" }}>
+                    <div>
+                        {extensionName === "PDF"
+                        ? <img width="30px" style={{position:"relative" , top:"3px"}} src="/pdf.svg" alt="pdf" />
+                        : <img width="35px" style={{position:"relative" , top:"3px"}} src="/doc.svg" alt="doc" />
+                        }
+                    </div>
+                    
+                    <div style={{whiteSpace: "nowrap",overflow : "hidden",textOverflow: "ellipsis" ,fontFamily:"monospace" ,padding:"5px"}}>
                         {filename.name}
                     </div>
                     <div style={{position:"relative", top:"5px"}}>
@@ -91,6 +114,8 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                         <span style={{}}>.{extensionName}</span>
                     </div>
                 </div>
+                </MediaQuery>
+                </>
             );
         }
     }
@@ -125,41 +150,61 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                 ? 
                 <>
                 <a href={message.message} target="_blank" download> 
-                    <img src="/download-circular-button.svg" alt="download-img" style={{position: "absolute",top: "50%",left: "50%",transform: "translate(-50%, -50%)",width: '80px'}}/>
+                    <img src="/download-circular-button.svg" alt="download-img" style={{position: "absolute",top: "50%",left: "50%",transform: "translate(-50%, -50%)",width: '20%'}}/>
                 </a>
-                <ImmageMessageText src={message.message}  /> 
+                
                 <IconButton style={{position:"absolute", bottom:"2px" ,right:"8px" }} onClick={()=>setShowImage("block")} >
                     <FullScreenIconButton />        
                 </IconButton>
-                <IconButton style={{position:"absolute", top:"2px" ,right:"8px",color:"#dcf8c6" }} >
-                    <DeleteIcon onClick={()=>deleteMessage(message)}/>
-                </IconButton>            
+                           
                 {TypeOfMessage === SenderImageElement 
-                        ? <TimeStamp style={{right : "8px" , bottom : "-11px"}}>
-                            {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}
-                            {read
-                                ? <DoubleTickIcon style={{fontSize:18, color:"#34B7F1"}} />
-                                :delivered 
-                                    ? <DoubleTickIcon style={{fontSize:18}} color="action" /> 
-                                    : <SingleTickIcon style={{fontSize:18}} color="action"/>
-                            }
-                        </TimeStamp> 
-                        : <TimeStamp style={{right : "0px" , bottom : "-11px"}}>
+                        ?<>
+                            <MediaQuery minWidth={450}>
+                                <ImmageMessageText style={{height: "350px", padding:"5px 10px 12px 5px" }} src={message.message}  /> 
+                            </MediaQuery>
+                            <MediaQuery maxWidth={450}>
+                                <ImmageMessageText style={{height: "250px", padding:"5px 10px 12px 5px"}} src={message.message}  /> 
+                            </MediaQuery>                        
+                            <IconButton style={{position:"absolute", top:"2px" ,right:"8px",color:"#dcf8c6" }} onClick={()=>deleteMessage(message)} >
+                                <DeleteIcon />
+                            </IconButton> 
+                            <TimeStamp style={{right : "8px" , bottom : "-11px"}}>
+                                {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}
+                                {read
+                                    ? <DoubleTickIcon style={{fontSize:18, color:"#34B7F1"}} />
+                                    :delivered 
+                                        ? <DoubleTickIcon style={{fontSize:18}} color="action" /> 
+                                        : <SingleTickIcon style={{fontSize:18}} color="action"/>
+                                }
+                            </TimeStamp> 
+                        </>
+                        : <>
+                        <MediaQuery minWidth={450}>
+                            <ImmageMessageText style={{height: "350px", padding:"5px 5px 12px 10px"}} src={message.message}  /> 
+                        </MediaQuery>
+                        <MediaQuery maxWidth={450}>
+                            <ImmageMessageText style={{height: "250px", padding:"5px 5px 12px 10px"}} src={message.message}  /> 
+                        </MediaQuery>
+                        <TimeStamp style={{right : "0px" , bottom : "-11px"}}>
                             {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}  
                         </TimeStamp>
+                        </>
                 } 
                 </>
                 : message.messageType==="doc"
                     ?
                     <>
-                    <div>
+                    <>
                     {getDocInfo()}
-                    </div>
-                    <IconButton style={{position:"absolute", top:"0px" ,right:"-2px" }} >
-                        <DeleteIcon style={{fontSize:17}} onClick={deleteMessage} />
-                    </IconButton>            
+                    </>
+                                
                     {TypeOfMessage === SenderDocElement 
-                        ? <TimeStamp style={{right : "8px"}}>
+                        ? 
+                        <>
+                        <IconButton style={{position:"absolute", top:"0px" ,right:"-5px" }} onClick={deleteMessage} >
+                            <DeleteIcon style={{fontSize:17}}  />
+                        </IconButton>
+                        <TimeStamp style={{right : "8px"}}>
                             {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}
                             {read
                                 ? <DoubleTickIcon style={{fontSize:18, color:"#34B7F1"}} />
@@ -168,6 +213,7 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                                     : <SingleTickIcon style={{fontSize:18}} color="action"/>
                             }
                         </TimeStamp> 
+                        </>
                         : <TimeStamp style={{right : "0px"}}>
                             {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}  
                         </TimeStamp>
@@ -176,11 +222,14 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                     : 
                     <>
                     <div style={{fontFamily:"Aparajita"}}>{message.message}</div>
-                    <IconButton style={{position:"absolute", top:"0px" ,right:"-2px" }} >
-                        <DeleteIcon style={{fontSize:17}} onClick={deleteMessage} />
-                    </IconButton>            
+                               
                     {TypeOfMessage === Sender 
-                        ? <TimeStamp style={{right : "8px"}}>
+                        ? 
+                        <>
+                        <IconButton style={{position:"absolute", top:"0px" ,right:"-5px" }} onClick={deleteMessage} >
+                            <DeleteIcon style={{fontSize:17}}  />
+                        </IconButton> 
+                        <TimeStamp style={{right : "8px"}}>
                             {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}
                             {read
                                 ? <DoubleTickIcon style={{fontSize:18, color:"#34B7F1"}} />
@@ -189,6 +238,7 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                                     : <SingleTickIcon style={{fontSize:18}} color="action"/>
                             }
                         </TimeStamp> 
+                        </>
                         : <TimeStamp style={{right : "0px"}}>
                             {message.timestamp ? moment(message.timestamp).format(MessageFormat) : "..."}  
                         </TimeStamp>
@@ -218,9 +268,7 @@ const Container = styled.div``;
 
 const ImmageMessageText = styled.img`
     alt : "image";
-    padding: 10px;
     width: 100%;
-    height: 350px;
     border-radius : 17px;
 `;
 
@@ -265,10 +313,13 @@ const Sender = styled(MessageElement)`
 const SenderImageElement = styled(Sender)`
     width : 450px;
     padding : 0px;
-    
 `;
 
-const SenderDocElement = styled(Sender)``;
+const SenderDocElement = styled(Sender)`
+    padding : 5px;
+    padding-bottom : 16px;
+    padding-right : 26px;
+`;
 
 const Receiver = styled(MessageElement)`
     background-color : white;
@@ -289,7 +340,9 @@ const ReceiverImageElement = styled(Receiver)`
 `;
 
 const ReceiverDocElement = styled(Receiver)`
-
+    padding : 5px;
+    padding-bottom : 16px;
+    padding-left : 10px;
 `;
 
 const SingleTickIcon = styled(DoneIcon)`

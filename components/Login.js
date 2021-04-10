@@ -12,6 +12,7 @@ const Login = () => {
             const user = result.user
             //console.log(user);
             db.collection('user').doc(user.uid).set({
+                userName : user.displayName,
                 email : user.email,
                 lastSeen : firebase.firestore.FieldValue.serverTimestamp(),
                 photoURL : user.photoURL,

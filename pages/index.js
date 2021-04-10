@@ -15,6 +15,7 @@ export default function Home() {
     //console.log("chat with user "+chatID);
     setChatID(chatID);
     setRecepientData(recepientData);
+    if(mobileViewToggle===false) toggleMobileViewContent()
     //setOneTwoOnechatInfo(chatInfo);
   }
 
@@ -22,8 +23,8 @@ export default function Home() {
     setRecepientData(recepientData);
   }
 
-  const toggleMobileViewContent = (e)=>{
-    console.log("toggleMobileViewContent called")
+  const toggleMobileViewContent = ()=>{
+    //console.log("toggleMobileViewContent called")
     setMobileViewToggle(!mobileViewToggle);
   }
 
@@ -43,7 +44,7 @@ export default function Home() {
       </MediaQuery>
       <MediaQuery maxWidth={450}>
       <Container >
-        <SideBarDiv style={{display:mobileViewToggle ? "none" : "block"}} onClick={toggleMobileViewContent}>
+        <SideBarDiv style={{display:mobileViewToggle ? "none" : "block"}} >
         <SideBarColumn chatID={chatID} seeChat={getChatId}/>
         </SideBarDiv>
         <ChatPanelDiv style={{display:mobileViewToggle? "block" : "none"}} >

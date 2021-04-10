@@ -1,7 +1,9 @@
+import HeadDetails from '../components/HeadDetails'
 
 const about = () => {
     return (  
         <>
+        <HeadDetails title="Whatsapp2.0:About" />
             About Page<br />
             Credits:
             <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>

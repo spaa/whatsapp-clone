@@ -9,9 +9,6 @@ import moment from 'moment';
 import 'w3-css/w3.css'
 import DoneIcon from '@material-ui/icons/Done';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
-import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
-import DescriptionIcon from '@material-ui/icons/Description';
 import Image from 'next/image'
 //import { useRouter } from 'next/router'
 
@@ -38,10 +35,10 @@ const Chat = ({id , users , seeChat}) => {
 
 
     const getDocInfo = ()=>{
-            console.log("File ",lastMessage.message)
+            //console.log("File ",lastMessage.message)
             const filename = storage.refFromURL(lastMessage.message);
             const extensionName = filename.name.split(".").pop().toUpperCase();
-            console.log("File to delete",filename)
+            //console.log("File to delete",filename)
             return (
                 <>
                 {extensionName === "PDF"

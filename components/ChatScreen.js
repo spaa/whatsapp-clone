@@ -11,16 +11,13 @@ import { Picker, Emoji } from "emoji-mart";
 import { Avatar, IconButton } from "@material-ui/core";
 import AttachFileIcon from "@material-ui/icons/AttachFile";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import MicIcon from "@material-ui/icons/Mic";
 import SendIcon from "@material-ui/icons/Send";
 import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
-import ChatIcon from "@material-ui/icons/Chat";
 import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
 import Message from "./Message";
 import 'w3-css/w3.css'
 import { useSwipeable } from "react-swipeable";
 import { v4 as uuidv4 } from "uuid";
-import imageCompressor from 'browser-image-compression';
 
 import ChatConversationHeader from "./ChatConversationHeader";
 //TODO Emoji Picker is not picking correct emojis
@@ -97,15 +94,15 @@ const ChatScreen = ({
       // Observe state change events such as progress, pause, and resume
       // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
       var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
+      //console.log('Upload is ' + progress + '% done');
       //alert("Upload is "+progress+"% done");
       switch (snapshot.state) {
         case firebase.storage.TaskState.PAUSED: // or 'paused'
-          console.log('Upload is paused');
+          //console.log('Upload is paused');
           //alert("Upload is paused")
           break;
         case firebase.storage.TaskState.RUNNING: // or 'running'
-          console.log('Upload is running');
+          //console.log('Upload is running');
           break;
       }
     }, 
@@ -117,7 +114,7 @@ const ChatScreen = ({
       // Handle successful uploads on complete
       // For instance, get the download URL: https://firebasestorage.googleapis.com/...
       uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-        console.log('File available at', downloadURL);
+        //console.log('File available at', downloadURL);
         alert("File Uploaded Successfully");
         saveMessageinDB(downloadURL, fileType)
       });
@@ -170,7 +167,7 @@ const ChatScreen = ({
   }
 
   const handleFileChange = (e)=>{
-    console.log("Image file:",e.target.files[0]);
+    //console.log("Image file:",e.target.files[0]);
     if(e.target.files[0] && e.target.files[0].size <= (1024*1024*3)){
       const fileExtension = e.target.files[0].name.split('.').pop();
       const fileName = "IMG"+uuidv4().replace(/\-/g, "")+new Date().getTime()+"."+fileExtension;
@@ -180,7 +177,7 @@ const ChatScreen = ({
   }
 
   const handleAttachmentFileChange = (e)=>{
-    console.log("Image file:",e.target.files[0]);
+    //console.log("Image file:",e.target.files[0]);
     if(e.target.files[0] && e.target.files[0].size <= (1024*1024*3)){
       const fileExtension = e.target.files[0].name.split('.').pop();
       const fileName = "DOC"+uuidv4().replace(/\-/g, "")+new Date().getTime()+"."+fileExtension;
@@ -250,6 +247,7 @@ const ChatScreen = ({
       <Header>
           <Avatar src={recepientData?.photoURL} />
         <ChatConversationHeader
+          key = {chatID}
           chatID={chatID}
           recepientData={recepientData}
           updateRecepientData={updateRecepientData}
@@ -269,10 +267,8 @@ const ChatScreen = ({
 
       <InputContainer ref={inputContainerRef}>
 
-        <IconButton>
-          <InsertEmoticonIcon
-            onClick={toggleShowPicker}
-          />
+        <IconButton onClick={toggleShowPicker}>
+          <InsertEmoticonIcon />
         </IconButton>
         <>
         <Input
@@ -286,14 +282,14 @@ const ChatScreen = ({
         </button>
           </>
         <>
-        <IconButton>
-        <PhotoLibraryIcon onClick={handleImageButtonClick} />
+        <IconButton onClick={handleImageButtonClick}>
+        <PhotoLibraryIcon />
         <input type="file" style={{display:"none"}} ref={hiddenImageFileInput} onInput={handleFileChange} multiple={false} accept="image/*" />
         </IconButton>
         </>
         <>
-        <IconButton>
-        <AttachFileIcon onClick={handleAttachmentButtonClick} />
+        <IconButton onClick={handleAttachmentButtonClick}>
+        <AttachFileIcon />
         <input type="file" style={{display:"none"}} ref={hiddenAttachmentFileInput} onInput={handleAttachmentFileChange} multiple={false} accept=".pdf,.doc" />
         </IconButton>
         </>

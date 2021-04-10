@@ -1,9 +1,6 @@
 import { Avatar, Button, IconButton } from "@material-ui/core";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import ChatIcon from "@material-ui/icons/Chat";
 import styled from "styled-components";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import RefreshIcon from '@material-ui/icons/Refresh';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { auth, db } from "../firebase";
@@ -52,7 +49,7 @@ const Sidebar = ({ seeChat }) => {
       alert("Chat with user already exists");
       return "";
     }
-    console.log("Creating chat");
+    //console.log("Creating chat");
     if (EmailValidator.validate(input) && input != user.email) {
       //Need to add chat into DB 'chats' collection
       db.collection("chats").add({
@@ -138,11 +135,11 @@ const Sidebar = ({ seeChat }) => {
               <Header>
                 <UserAvatar src={user?.photoURL} alt="user-image" />
                 <IconContainer>
-                  <IconButton>
-                    <ExitToAppIcon onClick={onLogout}  />
+                  <IconButton onClick={onLogout}  >
+                    <ExitToAppIcon/>
                   </IconButton>
-                  <IconButton>
-                    <MoreVertIcon />
+                  <IconButton onClick={()=>{router.push('/about')}}>
+                      <Image width={20} height={20} src="/info.svg" alt="About US" />
                   </IconButton>
                 </IconContainer>
               </Header>

@@ -17,7 +17,7 @@ const SearchBar = ({toggleSearchBarView, showChatList , chatSnapshot ,seeChat}) 
 
     const searchUsers = (e)=>{
         if(e.target.value != ""){
-            console.log("Entered Text",e.target.value);
+            //console.log("Entered Text",e.target.value);
             if(showChatList == true)
                 toggleSearchBarView(!showChatList);
             const getUsers = async()=>{
