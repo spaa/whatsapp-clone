@@ -30,7 +30,7 @@ const ChatConversation = ({chatID,recepientData ,updateRecepientData , toggleMob
                 :
                 <Body>
                 <Container>
-                    <DefaultImage src='/WhenNoChatSelected.PNG'/>
+                    <DefaultImage src='/WhenNoChatSelected.png' alt='no-Chat-To-Display' />
                 </Container> 
                 </Body>
                 }                   

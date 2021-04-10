@@ -1,7 +1,5 @@
 import styled,{ keyframes} from 'styled-components'
 import HeadDetails from './HeadDetails'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowAltCircleDown ,faFileAlt ,faFilePdf } from '@fortawesome/free-regular-svg-icons' 
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db ,storage } from "../firebase";
 import firebase from "firebase";
@@ -13,6 +11,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { IconButton } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import Image from 'next/image'
 import DescriptionIcon from '@material-ui/icons/Description';
 import GetAppIcon from '@material-ui/icons/GetApp';
 
@@ -76,8 +75,8 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
                 <div style={{display:"flex", backgroundColor:"#b6d6c0" , padding:"10px" , borderRadius:"6px",  cursor:"context-menu" ,userSelect:"none" }}>
                     <div>
                         {extensionName === "PDF"
-                        ? <img width="35px" src="/pdf.svg" alt="pdf" />
-                        : <img width="35px" src="/doc.svg" alt="doc" />
+                        ? <Image width={70} height={70} src="/pdf.svg" alt="pdf" />
+                        : <Image width={70} height={70} src="/doc.svg" alt="doc" />
                         }
                     </div>
                     <div style={{whiteSpace: "nowrap",overflow : "hidden",textOverflow: "ellipsis" ,fontFamily:"monospace" ,padding:"10px"}}>
@@ -198,15 +197,17 @@ const Message = ({id ,user , message, delivered , read , chatID}) => {
             }
             
         </TypeOfMessage>
-
-        <ImageModal style={{display:showImage}} >
-            <CloseButton>
-                <IconButton onClick={()=>setShowImage("none")}>
-                    <FullscreenExitIcon style={{color:"red"}} />
-                </IconButton>
-            </CloseButton>
-            <ModalImage src={message.message}/>
-        </ImageModal>
+        {
+            message.messageType==="image" &&
+            <ImageModal style={{display:showImage}} >
+                <CloseButton>
+                    <IconButton onClick={()=>setShowImage("none")}>
+                        <FullscreenExitIcon style={{color:"red"}} />
+                    </IconButton>
+                </CloseButton>
+                <ModalImage src={message.message}/>
+            </ImageModal>
+        }
         </Container> 
     );
 }
@@ -223,7 +224,7 @@ const ImmageMessageText = styled.img`
     border-radius : 17px;
 `;
 
-const MessageElement = styled.p`
+const MessageElement = styled.div`
     width : fit-content;
     padding : 15px;
     border-radius : 8px;

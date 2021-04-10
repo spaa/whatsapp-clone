@@ -12,9 +12,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import SpeakerNotesOffIcon from '@material-ui/icons/SpeakerNotesOff';
 import InsertPhotoIcon from '@material-ui/icons/InsertPhoto';
 import DescriptionIcon from '@material-ui/icons/Description';
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-//import { faArrowAltCircleDown } from '@fortawesome/free-solid-svg-icons' 
-//import { faArrowAltCircleDown } from '@fortawesome/free-regular-svg-icons' 
+import Image from 'next/image'
 //import { useRouter } from 'next/router'
 
 const Chat = ({id , users , seeChat}) => {
@@ -40,43 +38,25 @@ const Chat = ({id , users , seeChat}) => {
 
 
     const getDocInfo = ()=>{
-        if(message.messageType==="doc"){
-            console.log("File ",message.message)
-            const filename = storage.refFromURL(message.message);
+            console.log("File ",lastMessage.message)
+            const filename = storage.refFromURL(lastMessage.message);
             const extensionName = filename.name.split(".").pop().toUpperCase();
             console.log("File to delete",filename)
             return (
-                <div style={{display:"flex", backgroundColor:"#b6d6c0" , padding:"10px" , borderRadius:"6px",  cursor:"context-menu" ,userSelect:"none" }}>
-                    <div>
-                        {extensionName === "PDF"
-                        ? <img width="35px" src="/pdf.svg" alt="pdf"/>
-                        : <img width="35px" src="/doc.svg" alt="doc"/>
-                        }
-                    </div>
-                    <div style={{whiteSpace: "nowrap",overflow : "hidden",textOverflow: "ellipsis" ,fontFamily:"monospace" ,padding:"10px"}}>
-                        {filename.name}
-                    </div>
-                    <div style={{position:"relative", top:"5px"}}>
-                        <a href={message.message} target="_blank" download>
-                            <img src="/download-circular-button.svg" width="30px" />
-                        </a>
-                    </div>
-                    <div style={{position:"absolute", bottom:"-1px" , fontSize:"14px", fontFamily:"monospace" , color:"grey"}}>
-                        <span style={{}}>.{extensionName}</span>
-                    </div>
-                </div>
+                <>
+                {extensionName === "PDF"
+                        ? <><Image width={20} height={20} src="/pdf-simple.svg" alt="pdf" /><span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}> PDF</span></>
+                        : <><Image width={20} height={20} src="/doc-simple.svg" alt="doc" /><span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}> DOC</span></>
+                }
+                </>
             );
-        }
     }
 
 
     return (  
         <Container onClick={()=>seeChat(id , recepient )}>
             <HeadDetails />
-            {recepient 
-                ? (<UserAvatar src={recepient?.photoURL}/>)
-                : (<UserAvatar> {recepientEmail[0]}</UserAvatar>)
-            }
+                <UserAvatar src={recepient?.photoURL} alt={recepientEmail} />
             <MessageContent>
                 <UserName >
                     {recepientEmail}                  
@@ -84,9 +64,9 @@ const Chat = ({id , users , seeChat}) => {
                 <LastMessageContainer>
                     <LastMessage>
                         {lastMessage?.messageType === "image" 
-                            ? <><InsertPhotoIcon style={{fontSize:20}} /> <span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}>Photo</span></>
+                            ? <><Image width={20} height={20} src="/camera.svg" alt="doc" /> <span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}>Photo</span></>
                             : lastMessage?.messageType === "doc" 
-                                ? <><DescriptionIcon style={{fontSize:20}} /> <span style={{position: "relative", bottom:"4px", fontFamily:"Helvetica"}}>Doc</span></>
+                                ? getDocInfo()
                                 :lastMessage?.message
                         }
                     </LastMessage>
@@ -173,7 +153,7 @@ const LastMessage = styled.span`
     margin : 5px 0px;
 `;
 
-const LastMessageContainer = styled.p`
+const LastMessageContainer = styled.div`
     display :flex;
     white-space: nowrap;
     overflow : hidden;

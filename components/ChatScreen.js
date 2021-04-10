@@ -145,8 +145,8 @@ const ChatScreen = ({
         <>
           <Message
             key={message.id}
-            id = {message.id}
             user={message.data().user}
+            id = {message.id}
             chatID={chatID}
             delivered={message.data().delivered}
             read={message.data().messageSeen}

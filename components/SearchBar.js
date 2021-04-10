@@ -78,7 +78,7 @@ const SearchBar = ({toggleSearchBarView, showChatList , chatSnapshot ,seeChat}) 
             ? <SearchIconStyle style={{fontSize:24}} color="disabled" />
             : <GoBackIconStyle style={{fontSize:24, color:"#34B7F1"}} onClick={changeToggleView} />
         }
-            <label style={{display:"none"}}>Search</label>
+            <label style={{position:"absolute",zIndex:"-100"}}>Search</label>
             <SearchInput ref={searchValue} placeholder="Search in Chat" onChange={searchUsers} />
         </Search>
         

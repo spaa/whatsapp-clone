@@ -8,7 +8,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { auth, db } from "../firebase";
 import firebase from "firebase";
-
+import Image from 'next/image'
+import { useRouter } from 'next/router'
 import MediaQuery from "react-responsive";
 
 import SearchBar from "./SearchBar";
@@ -19,6 +20,7 @@ import { useEffect, useState } from "react";
 const Sidebar = ({ seeChat }) => {
   const [user] = useAuthState(auth);
   const [showChatList,setShowChatList] = useState(true);
+  const router = useRouter();
 
   if(user){
   var userCharRef = db
@@ -101,13 +103,13 @@ const Sidebar = ({ seeChat }) => {
           <Container>
             <Sticky>
               <Header>
-                <UserAvatar src={user?.photoURL} />
+                <UserAvatar src={user?.photoURL} alt="user-image" />
                 <IconContainer>
-                  <IconButton>
-                    <ExitToAppIcon onClick={onLogout}  />
+                  <IconButton onClick={onLogout}>
+                    <ExitToAppIcon />
                   </IconButton>
-                  <IconButton>
-                    <MoreVertIcon />
+                  <IconButton onClick={()=>{router.push('/about')}}>
+                      <Image width={20} height={20} src="/info.svg" alt="About US" />
                   </IconButton>
                 </IconContainer>
               </Header>
@@ -134,7 +136,7 @@ const Sidebar = ({ seeChat }) => {
           <Container >
             <Sticky>
               <Header>
-                <UserAvatar src={user?.photoURL} />
+                <UserAvatar src={user?.photoURL} alt="user-image" />
                 <IconContainer>
                   <IconButton>
                     <ExitToAppIcon onClick={onLogout}  />

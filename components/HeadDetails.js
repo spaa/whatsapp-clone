@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const HeadDetails = ({title}) => {
     return (  
-        <Head>
+        <Head lang="en">
             <title>{title}</title>
             <link rel="icon" href="/whatsapp1012-1024.png"/>
         </Head>
